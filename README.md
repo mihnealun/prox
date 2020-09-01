@@ -130,3 +130,4 @@ Unit tests
 * Implement response codes other than 200 
 * Implement routes with parameters
 * Implement authentication support for each endpoint
+* Remove dependency on .env file (replace with cli params)
