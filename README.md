@@ -4,6 +4,7 @@ This is a work in progress and not ready for production yet.
 If you really want to speed things up, please consider contributing.
 
 The idea was to create an easy to deploy application capable to serve semi-static pages really, really fast.
+Prox wants to be a tool capable of mitigating really high load on landing pages during expected traffic spikes (Black Friday or similar campaigns). 
 
 * easy to deploy
     - prox is a single binary application
@@ -12,7 +13,8 @@ The idea was to create an easy to deploy application capable to serve semi-stati
 * semi-static
     - every N seconds (configurable in routes.json), prox loads JSON data from a fast source (memcache, redis, etc.) and populates an HTML template with it
     - prox serves the generated HTML content (template + cache data) as a normal server would
-    - client can receive data that is at most N seconds old (N is configurable per each defined endpoint)  
+    - client can receive data that is at most N seconds old (N is configurable per each defined endpoint) 
+    - prox does not know or care who writes the data, the only convention is that data is in JSON format and matches with the provided template 
 
 * really, really fast
     - with logs disabled, ab reports
