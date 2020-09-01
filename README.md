@@ -1,6 +1,59 @@
 # prox
 
-## Setup GoLand
+This is a work in progress and not ready for production yet.
+If you really want to speed things up, please consider contributing.
+
+The idea was to create an easy to deploy application capable to serve semi-static pages really, really fast.
+
+* easy to deploy
+    - prox is a single binary application
+    - prox relies on only a JSON route configuration file and one .env file for application config
+    
+* semi-static
+    - every N seconds (configurable in routes.json), prox loads JSON data from a fast source (memcache, redis, etc.) and populates an HTML template with it
+    - prox serves the generated HTML content (template + cache data) as a normal server would
+    - client can receive data that is at most N seconds old (N is configurable per each defined endpoint)  
+
+* really, really fast
+    - with logs disabled, ab reports
+~~~~
+ ab -n 1000000 -c 100 http://localhost:50001/
+
+Document Path:          /
+Document Length:        56 bytes
+
+Concurrency Level:      100
+Time taken for tests:   40.941 seconds
+Complete requests:      1000000
+Failed requests:        0
+Total transferred:      195000000 bytes
+HTML transferred:       56000000 bytes
+Requests per second:    24425.38 [#/sec] (mean)
+Time per request:       4.094 [ms] (mean)
+Time per request:       0.041 [ms] (mean, across all concurrent requests)
+Transfer rate:          4651.32 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    1   0.5      1       7
+Processing:     0    3   1.6      3      29
+Waiting:        0    3   1.5      3      27
+Total:          0    4   1.5      4      29
+
+Percentage of the requests served within a certain time (ms)
+  50%      4
+  66%      4
+  75%      5
+  80%      5
+  90%      6
+  95%      7
+  98%      8
+  99%      9
+ 100%     29 (longest request)
+
+~~~~     
+
+### Contributors Stuff
 
 ### Enable modules vendoring mode
 Enable `Preferences` > `Go Modules (vgo)` > `Vendoring Mode`.
@@ -70,5 +123,8 @@ go test ./...
 ## TODO
 
 Unit tests
-Implement connectors for memcache, redis, mongo and file
- 
+* Implement connectors for memcache, redis, mongo and file
+* Implement templating system (support multiple template formats)
+* Implement response codes other than 200 
+* Implement routes with parameters
+* Implement authentication support for each endpoint
