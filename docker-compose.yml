@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+    prox:
+      build:
+        dockerfile: Dockerfile
+        context: .
+      ports:
+        - "50001:50000"
+      restart: on-failure
+      networks:
+        - default
+      volumes:
+        - .:/go/src/github.com/mihnealun/prox
+      env_file:
+        - .env
+
+networks:
+  default:

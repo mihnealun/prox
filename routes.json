@@ -1,0 +1,46 @@
+{
+  "endpoints": [
+    {
+      "name": "landing",
+      "path": "/",
+      "template": {
+        "provider": "memcache",
+        "key": "landing"
+      },
+      "data": {
+        "provider": "memcache",
+        "key": "landing",
+        "ttl": 5
+      }
+    },
+    {
+      "name": "user_list",
+      "path": "/user",
+      "template": {
+        "provider": "redis",
+        "key": "user"
+      },
+      "data": {
+        "provider": "redis",
+        "key": "user",
+        "ttl": 7
+      }
+    }
+  ],
+  "providers": [
+    {
+      "name": "memcache",
+      "connection_string": "localhost:2222",
+      "user": "",
+      "password": "",
+      "collection": ""
+    },
+    {
+      "name": "redis",
+      "connection_string": "localhost:2222",
+      "user": "",
+      "password": "",
+      "collection": ""
+    }
+  ]
+}
