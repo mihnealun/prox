@@ -4,7 +4,9 @@ This is a work in progress and not ready for production yet.
 If you really want to speed things up, please consider contributing.
 
 The idea was to create an easy to deploy application capable to serve semi-static pages really, really fast.
-Prox wants to be a tool capable of mitigating really high load on landing pages during expected traffic spikes (Black Friday or similar campaigns). 
+Prox wants to be a tool capable of mitigating 
+    - really high load on landing pages during expected traffic spikes (Black Friday or similar campaigns).
+    - high load on mostly static content sites (wordpress, magento, etc.) 
 
 * easy to deploy
     - prox is a single binary application
