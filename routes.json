@@ -5,7 +5,7 @@
       "path": "/",
       "template": {
         "provider": "memcache",
-        "key": "landing"
+        "key": "landing_template"
       },
       "data": {
         "provider": "memcache",
@@ -18,7 +18,7 @@
       "path": "/user",
       "template": {
         "provider": "redis",
-        "key": "user"
+        "key": "user_template"
       },
       "data": {
         "provider": "redis",
