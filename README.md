@@ -116,6 +116,23 @@ Here is an example for an endpoint JSON structure:
 }
 ~~~~
 
+
+## Providers
+
+Providers are defined in the routes.json file and registered upon application start
+
+Here is an example for a provider JSON structure:
+
+```
+{
+    "name": "memcache",
+    "connection_string": "memcached:11211",
+    "user": "",
+    "password": "",
+    "collection": ""
+}
+```
+
 ## TESTS
 
 Work in progress
@@ -127,7 +144,7 @@ go test ./...
 ## TODO
 
 Unit tests
-* Implement connectors for memcache, redis, mongo and file
+* Implement connectors for mongoDB, url(CDN) and file
 * Implement templating system (support multiple template formats)
 * Implement response codes other than 200 
 * Implement routes with parameters

@@ -35,5 +35,5 @@ func (dp *MemcacheDataProvider) GetValue(key string) []byte {
 func (dp *MemcacheDataProvider) addTestData(provider rconfig.DataProvider) {
 	client := memcache.New(provider.ConnectionString)
 	_ = client.Set(&memcache.Item{Key: "landing", Value: []byte(`{"name": "Bigus Dickus"}`)})
-	_ = client.Set(&memcache.Item{Key: "landing_template", Value: []byte(`Template from memcache says your name is {{ name }}!`)})
+	_ = client.Set(&memcache.Item{Key: "landing_template", Value: []byte(`<html><head></head><body style="color:red">Template from memcache says your name is <strong>{{ name }}</strong>!</body></html>`)})
 }
