@@ -11,8 +11,8 @@ type MemcacheDataProvider struct {
 }
 
 func NewMemcacheDataProvider(provider rconfig.DataProvider) DataProvider {
+	// TODO: remove this after testing is done
 	client := memcache.New(provider.ConnectionString)
-
 	_ = client.Set(&memcache.Item{Key: "landing", Value: []byte(`{"key": "memcache value yeeee"}`)})
 
 	return &MemcacheDataProvider{
