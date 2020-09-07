@@ -16,13 +16,14 @@ type Container interface {
 	GetConfig() *Config
 	GetLogger(ctx context.Context) (Logger, error)
 	GetHttpData(routeName string) *string
-	SetHttpData(routeName string, content []byte)
+	SetHttpData(routeName string, content string)
 	SetProvider(name string, provider service.DataProvider)
 	GetProvider(name string) (service.DataProvider, error)
 	AddRoute(path, name string)
 	GetRouteNameByPath(path string) (string, error)
 	InitRefreshingStaticData() error
 	RegisterProviders() error
+	BuildPage(template, data []byte) string
 }
 
 type container struct {
@@ -117,9 +118,8 @@ func getRouteConfig() (data rconfig.Config, err error) {
 }
 
 // SetHttpData updates the http static content for a route
-func (c *container) SetHttpData(routeName string, content []byte) {
-	strContent := string(content)
-	c.Html[routeName] = &strContent
+func (c *container) SetHttpData(routeName, content string) {
+	c.Html[routeName] = &content
 }
 
 // GetHttpData returns the static HTTP data for a given route
@@ -142,17 +142,27 @@ func (c *container) InitRefreshingStaticData() error {
 			return err
 		}
 
-		go func(c Container, cep rconfig.Endpoint, prov service.DataProvider) {
+		templateProvider, err := c.GetProvider(ep.Template.Provider)
+		if err != nil {
+			return err
+		}
+
+		go func(c Container, cep rconfig.Endpoint, prov service.DataProvider, templateProv service.DataProvider) {
 			for {
 				data := prov.GetValue(cep.Data.Key)
-				//template := "asdf asdfasdf"
-				c.SetHttpData(cep.Name, data)
+				template := templateProv.GetValue(cep.Template.Key)
+				c.SetHttpData(cep.Name, c.BuildPage(template, data))
 				time.Sleep(time.Second * time.Duration(cep.Data.Ttl))
 			}
-		}(c, ep, provider)
+		}(c, ep, provider, templateProvider)
 	}
 
 	return nil
+}
+
+func (c *container) BuildPage(template, data []byte) string {
+	// TODO: implement templating service and merge data into template
+	return string(data)
 }
 
 // RegisterProviders register the data providers so that they can be used by routes
