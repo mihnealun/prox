@@ -8,6 +8,7 @@ import (
 	"github.com/mihnealun/prox/infrastructure/rconfig"
 	"io/ioutil"
 	"sync"
+	"time"
 )
 
 // Container interface that described what services it holds
@@ -15,11 +16,13 @@ type Container interface {
 	GetConfig() *Config
 	GetLogger(ctx context.Context) (Logger, error)
 	GetHttpData(routeName string) *string
-	SetHttpData(routeName string, content *string)
+	SetHttpData(routeName string, content []byte)
 	SetProvider(name string, provider service.DataProvider)
 	GetProvider(name string) (service.DataProvider, error)
 	AddRoute(path, name string)
 	GetRouteNameByPath(path string) (string, error)
+	InitRefreshingStaticData() error
+	RegisterProviders() error
 }
 
 type container struct {
@@ -114,11 +117,59 @@ func getRouteConfig() (data rconfig.Config, err error) {
 }
 
 // SetHttpData updates the http static content for a route
-func (c *container) SetHttpData(routeName string, content *string) {
-	c.Html[routeName] = content
+func (c *container) SetHttpData(routeName string, content []byte) {
+	strContent := string(content)
+	c.Html[routeName] = &strContent
 }
 
 // GetHttpData returns the static HTTP data for a given route
 func (c *container) GetHttpData(routeName string) *string {
-	return c.Html[routeName]
+	if data, ok := c.Html[routeName]; ok {
+		return data
+	}
+
+	emptyResult := ""
+
+	return &emptyResult
+}
+
+// InitRefreshingStaticData rebuilds and updates the httpdata every N seconds
+func (c *container) InitRefreshingStaticData() error {
+	for _, ep := range c.GetConfig().Routes.Endpoints {
+		c.AddRoute(ep.Path, ep.Name)
+		provider, err := c.GetProvider(ep.Data.Provider)
+		if err != nil {
+			return err
+		}
+
+		go func(c Container, cep rconfig.Endpoint, prov service.DataProvider) {
+			for {
+				data := prov.GetValue(cep.Data.Key)
+				//template := "asdf asdfasdf"
+				c.SetHttpData(cep.Name, data)
+				time.Sleep(time.Second * time.Duration(cep.Data.Ttl))
+			}
+		}(c, ep, provider)
+	}
+
+	return nil
+}
+
+// RegisterProviders register the data providers so that they can be used by routes
+func (c *container) RegisterProviders() error {
+	for _, dp := range c.GetConfig().Routes.Providers {
+		if dp.Name == "memcache" {
+			c.SetProvider(dp.Name, service.NewMemcacheDataProvider(dp))
+			continue
+		}
+
+		if dp.Name == "redis" {
+			c.SetProvider(dp.Name, service.NewRedisDataProvider(dp))
+			continue
+		}
+
+		return fmt.Errorf("provider not implemented")
+	}
+
+	return nil
 }

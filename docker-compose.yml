@@ -14,6 +14,23 @@ services:
         - .:/go/src/github.com/mihnealun/prox
       env_file:
         - .env
-
+    memcached:
+      image: memcached:alpine
+      ports:
+      - "11211:11211"
+      restart: on-failure
+      networks:
+        - default
+      env_file:
+        - .env
+    redis:
+      image: redis:6.0.7-alpine
+      ports:
+      - "6379:6379"
+      restart: on-failure
+      networks:
+        - default
+      env_file:
+        - .env
 networks:
   default:

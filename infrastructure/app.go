@@ -26,10 +26,13 @@ func Start(containerInstance container.Container) error {
 	e.Use(echoMiddleware.Gzip())
 
 	// register data providers
-	route.RegisterProviders(containerInstance, containerInstance.GetConfig().Routes.Providers)
+	err := containerInstance.RegisterProviders()
+	if err != nil {
+		return err
+	}
 
 	// init workers that will regenerate content every ttl seconds for each endpoint
-	err := route.InitRefreshingStaticData(containerInstance)
+	err = containerInstance.InitRefreshingStaticData()
 	if err != nil {
 		return err
 	}

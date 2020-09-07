@@ -30,17 +30,17 @@
   "providers": [
     {
       "name": "memcache",
-      "connection_string": "localhost:2222",
+      "connection_string": "memcached:11211",
       "user": "",
       "password": "",
       "collection": ""
     },
     {
       "name": "redis",
-      "connection_string": "localhost:2222",
+      "connection_string": "redis:6379",
       "user": "",
       "password": "",
-      "collection": ""
+      "collection": "0"
     }
   ]
 }
