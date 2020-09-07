@@ -1,11 +1,13 @@
 package container
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/mihnealun/prox/domain/service"
 	"github.com/mihnealun/prox/infrastructure/rconfig"
+	"github.com/tyler-sommer/stick"
 	"io/ioutil"
 	"sync"
 	"time"
@@ -161,8 +163,21 @@ func (c *container) InitRefreshingStaticData() error {
 }
 
 func (c *container) BuildPage(template, data []byte) string {
-	// TODO: implement templating service and merge data into template
-	return string(data)
+	eng := stick.New(nil)
+	buf := new(bytes.Buffer)
+
+	var ii map[string]stick.Value
+
+	err := json.Unmarshal(data, &ii)
+	if err != nil {
+		return "error decoding cache data"
+	}
+
+	if err := eng.Execute(string(template), buf, ii); err != nil {
+		return ""
+	}
+
+	return buf.String()
 }
 
 // RegisterProviders register the data providers so that they can be used by routes
